@@ -1,0 +1,44 @@
+import _root_.io.regadas.sbt.SbtSoccoKeys._
+
+inThisBuild(
+  List(
+    organization := "io.regadas",
+    licenses := Seq(
+      "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
+    ),
+    developers := List(
+      Developer(
+        "regadas",
+        "Filipe Regadas",
+        "filiperegadas@gmail.com",
+        url("https://twitter.com/regadas")
+      )
+    ),
+    scalaVersion := "2.12.8"
+  )
+)
+
+lazy val root = project
+  .in(file("."))
+  .settings(publish / skip := true)
+  .aggregate(`sbt-socco`, `socco-examples`)
+
+lazy val `sbt-socco` = project
+  .in(file("sbt-socco"))
+  .settings(publishSettings)
+
+lazy val `socco-examples` = project
+  .in(file("socco-examples"))
+  .settings(
+    publish / skip := true,
+    soccoOnCompile := true,
+    soccoOut := target.value / "site"
+  )
+  .enablePlugins(SbtSoccoPlugin)
+
+lazy val publishSettings: Seq[Def.Setting[_]] = Def.settings(
+  publishMavenStyle := false,
+  bintrayRepository := "sbt-plugins",
+  bintrayOrganization in bintray := None,
+  bintrayReleaseOnPublish := false
+)
