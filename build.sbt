@@ -14,14 +14,18 @@ inThisBuild(
         url("https://twitter.com/regadas")
       )
     ),
-    scalaVersion := "2.12.8"
+    scalaVersion := "2.12.8",
+    git.remoteRepo := "git@github.com:regadas/sbt-socco.git"
   )
 )
 
 lazy val root = project
   .in(file("."))
-  .settings(publish / skip := true)
+  .settings(
+    publish / skip := true
+  )
   .aggregate(`sbt-socco`, `socco-examples`)
+  .enablePlugins(GhpagesPlugin)
 
 lazy val `sbt-socco` = project
   .in(file("sbt-socco"))
@@ -32,7 +36,10 @@ lazy val `socco-examples` = project
   .settings(
     publish / skip := true,
     soccoOnCompile := true,
-    soccoOut := target.value / "site"
+    soccoOut := target.value / "socco",
+    soccoPackage += "scala:http://www.scala-lang.org/api/current/",
+    makeSite / mappings ++= soccoOut.value.listFiles.map(f => (f, f.getName)).toSeq,
+    makeSite := makeSite.dependsOn(Compile / compile).value
   )
   .enablePlugins(SbtSoccoPlugin)
 
