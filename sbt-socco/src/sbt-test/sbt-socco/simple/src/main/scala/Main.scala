@@ -1,3 +1,5 @@
+// Example: This is a simple scala app
+
 package simple
 
 /**
