@@ -14,7 +14,6 @@ inThisBuild(
         url("https://twitter.com/regadas")
       )
     ),
-    scalaVersion := "2.12.8",
     git.remoteRepo := "git@github.com:regadas/sbt-socco.git"
   )
 )
