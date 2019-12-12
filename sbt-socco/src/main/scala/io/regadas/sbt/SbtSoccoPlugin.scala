@@ -3,15 +3,17 @@ package io.regadas.sbt
 import sbt.Keys._
 import sbt._
 import sbt.plugins.JvmPlugin
+import com.typesafe.sbt.site.SitePlugin
 
 object SbtSoccoPlugin extends AutoPlugin {
   val SoccoCompilerPlugin: ModuleID = "com.criteo.socco" %% "socco-plugin" % "0.1.9"
 
   override def trigger: PluginTrigger = noTrigger
-  override def requires = JvmPlugin
+  override def requires = JvmPlugin && SitePlugin
 
   val autoImport = SbtSoccoKeys
   import autoImport._
+  import SitePlugin.autoImport._
 
   override lazy val projectSettings = soccoSettings(ThisProject)
 
@@ -21,6 +23,7 @@ object SbtSoccoPlugin extends AutoPlugin {
     Def.settings(
       soccoOnCompile.in(p) := onCompile,
       soccoPackage := Nil,
+      soccoOut := target.value / "socco",
       scalacOptions.in(p) ++= Def.taskDyn {
         if (soccoOnCompile.in(p).value) {
           Def.task(
@@ -56,7 +59,8 @@ object SbtSoccoPlugin extends AutoPlugin {
         } else {
           Def.task(default.value)
         }
-      }.value
+      }.value,
+      makeSite / mappings ++= soccoOut.value.listFiles.map(f => (f, f.getName)).toSeq
     )
 
   private[this] def projectsWithSocco(state: State): Seq[(ProjectRef, Boolean)] = {
