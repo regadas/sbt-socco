@@ -6,7 +6,8 @@ import sbt.plugins.JvmPlugin
 import com.typesafe.sbt.site.SitePlugin
 
 object SbtSoccoPlugin extends AutoPlugin {
-  val SoccoCompilerPlugin: ModuleID = "com.criteo.socco" %% "socco-plugin" % "0.1.9"
+  val SoccoCompilerPlugin
+      : ModuleID = "com.criteo.socco" %% "socco-plugin" % "0.1.9"
 
   override def trigger: PluginTrigger = noTrigger
   override def requires = JvmPlugin && SitePlugin
@@ -17,7 +18,8 @@ object SbtSoccoPlugin extends AutoPlugin {
 
   override lazy val projectSettings = soccoSettings(ThisProject)
 
-  override lazy val globalSettings = Def.settings(commands += enableSoccoCommand)
+  override lazy val globalSettings =
+    Def.settings(commands += enableSoccoCommand)
 
   def soccoSettings(p: ProjectReference, onCompile: Boolean = false) =
     Def.settings(
@@ -35,7 +37,8 @@ object SbtSoccoPlugin extends AutoPlugin {
             ).flatten ++ soccoPackage
               .in(p)
               .map(_.map(s"-P:socco:package_" + _))
-              .value)
+              .value
+          )
         } else {
           Def.task(Nil: Seq[String])
         }
@@ -60,10 +63,14 @@ object SbtSoccoPlugin extends AutoPlugin {
           Def.task(default.value)
         }
       }.value,
-      makeSite / mappings ++= soccoOut.value.listFiles.map(f => (f, f.getName)).toSeq
+      makeSite / mappings ++= soccoOut.value.listFiles
+        .map(f => (f, f.getName))
+        .toSeq
     )
 
-  private[this] def projectsWithSocco(state: State): Seq[(ProjectRef, Boolean)] = {
+  private[this] def projectsWithSocco(
+      state: State
+  ): Seq[(ProjectRef, Boolean)] = {
     val extracted = Project.extract(state)
     for {
       p <- extracted.structure.allProjectRefs
@@ -71,15 +78,16 @@ object SbtSoccoPlugin extends AutoPlugin {
     } yield p -> onCompile
   }
 
-  private[this] lazy val enableSoccoCommand = Command.command("enableSocco") { s =>
-    val extracted = Project.extract(s)
-    val settings: Seq[Setting[_]] = for {
-      (p, onCompile) <- projectsWithSocco(s)
-      if !onCompile
-      setting <- soccoSettings(p, onCompile = true)
-    } yield setting
+  private[this] lazy val enableSoccoCommand = Command.command("enableSocco") {
+    s =>
+      val extracted = Project.extract(s)
+      val settings: Seq[Setting[_]] = for {
+        (p, onCompile) <- projectsWithSocco(s)
+        if !onCompile
+        setting <- soccoSettings(p, onCompile = true)
+      } yield setting
 
-    extracted.appendWithoutSession(settings, s)
+      extracted.appendWithoutSession(settings, s)
   }
 
 }
@@ -90,7 +98,9 @@ object SbtSoccoKeys {
   val soccoHeader = settingKey[File]("path to specify a custom HTML header")
   val soccoFooter = settingKey[File]("path to specify a custom HTML footer")
   val soccoPackage =
-    settingKey[List[String]]("$packageName:$scalaDocUrl to specify a Scala API doc to link")
+    settingKey[List[String]](
+      "$packageName:$scalaDocUrl to specify a Scala API doc to link"
+    )
   val soccoIndex = taskKey[File]("Generates examples/index.html")
   val soccoOnCompile: SettingKey[Boolean] = settingKey[Boolean]("Socco doc's")
 }
