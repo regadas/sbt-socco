@@ -36,11 +36,7 @@ lazy val `socco-examples` = project
   .settings(
     publish / skip := true,
     soccoOnCompile := true,
-    soccoOut := target.value / "socco",
     soccoPackage += "scala:http://www.scala-lang.org/api/current/",
-    makeSite / mappings ++= soccoOut.value.listFiles
-      .map(f => (f, f.getName))
-      .toSeq,
     makeSite := makeSite.dependsOn(Compile / compile).value
   )
   .enablePlugins(SbtSoccoPlugin)
