@@ -168,7 +168,9 @@ object SbtSoccoPlugin extends AutoPlugin {
           val section =
             (Compile / scalaSource).value
               .relativize(f)
-              .fold("")(_.getParent.replace("/", "."))
+              .fold("") { p =>
+                Option(p.getParent).fold("")(_.replace("/", "."))
+              }
           val title = examplePattern.unapplySeq(head).get.head
           val url = scmInfo.value
             .map { info =>
