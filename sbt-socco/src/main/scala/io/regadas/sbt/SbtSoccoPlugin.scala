@@ -175,8 +175,10 @@ object SbtSoccoPlugin extends AutoPlugin {
           val title = examplePattern.unapplySeq(head).get.head
           val url = scmInfo.value
             .map { info =>
-              val path = baseDirectory.value.relativize(f).fold("")(_.toString)
-              s"${info.browseUrl}/blob/master/${normalizedName.value}/$path"
+              val path = (ThisBuild / baseDirectory).value
+                .relativize(f)
+                .fold("")(_.toString)
+              s"${info.browseUrl}/blob/master/$path"
             }
             .getOrElse("")
 
