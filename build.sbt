@@ -25,7 +25,6 @@ lazy val root = project
     publish / skip := true
   )
   .aggregate(`sbt-socco`, `socco-examples`)
-  .enablePlugins(GhpagesPlugin)
 
 lazy val `sbt-socco` = project
   .in(file("sbt-socco"))
@@ -40,6 +39,7 @@ lazy val `socco-examples` = project
     makeSite := makeSite.dependsOn(Compile / compile).value
   )
   .enablePlugins(SbtSoccoPlugin)
+  .enablePlugins(GhpagesPlugin)
 
 lazy val publishSettings: Seq[Def.Setting[_]] = Def.settings(
   publishMavenStyle := false,
