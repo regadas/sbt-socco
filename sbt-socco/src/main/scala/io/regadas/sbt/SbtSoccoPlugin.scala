@@ -71,9 +71,10 @@ object SbtSoccoPlugin extends AutoPlugin {
           Def.task(default.value)
         }
       }.value,
-      makeSite / mappings ++= soccoOut.value.listFiles
-        .map(f => (f, f.getName))
-        .toSeq
+      makeSite / mappings ++= Option(soccoOut.value.listFiles)
+        .fold(Seq.empty[(File, String)]) {
+          _.map(f => (f, f.getName)).toSeq
+        }
     )
 
   private[this] def projectsWithSocco(
