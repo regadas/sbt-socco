@@ -149,43 +149,46 @@ object SbtSoccoPlugin extends AutoPlugin {
     file
   }
 
-  private[this] def sources = Def.task {
-    val examplePattern = "^\\s*// Example:\\s*(.+)".r
-    val files = Files
-      .walk(Paths.get((Compile / scalaSource).value.toURI()))
-      .collect(Collectors.toList())
-      .asScala
-      .iterator
-      .filter(Files.isRegularFile(_))
-      .map(_.toFile())
-      .toList
+  private[this] def sources: Def.Initialize[Task[List[ExampleSource]]] =
+    Def.task {
+      val examplePattern = "^\\s*// Example:\\s*(.+)".r
+      val files = Files
+        .walk(Paths.get((Compile / scalaSource).value.toURI()))
+        .collect(Collectors.toList())
+        .asScala
+        .iterator
+        .filter(Files.isRegularFile(_))
+        .map(_.toFile())
+        .toList
 
-    files.flatMap { f =>
-      val lines = read(f).getOrElse(Nil)
-      lines.filter(_.startsWith("// Example:")) match {
-        case Nil       => None
-        case head :: _ =>
-          // val section = s"${f.getParentFile.getName}/"
-          val section =
-            (Compile / scalaSource).value
-              .relativize(f)
-              .fold("") { p =>
-                Option(p.getParent).fold("")(_.replace("/", "."))
-              }
-          val title = examplePattern.unapplySeq(head).get.head
-          val url = scmInfo.value
-            .map { info =>
-              val path = (ThisBuild / baseDirectory).value
-                .relativize(f)
-                .fold("")(_.toString)
-              s"${info.browseUrl}/blob/master/$path"
-            }
-            .getOrElse("")
+      files
+        .flatMap { f =>
+          val lines = read(f).getOrElse(Nil)
+          lines.filter(_.startsWith("// Example:")) match {
+            case Nil       => None
+            case head :: _ =>
+              // val section = s"${f.getParentFile.getName}/"
+              val section =
+                (Compile / scalaSource).value
+                  .relativize(f)
+                  .fold("") { p =>
+                    Option(p.getParent).fold("")(_.replace("/", "."))
+                  }
+              val title = examplePattern.unapplySeq(head).get.head
+              val url = scmInfo.value
+                .map { info =>
+                  val path = (ThisBuild / baseDirectory).value
+                    .relativize(f)
+                    .fold("")(_.toString)
+                  s"${info.browseUrl}/blob/master/$path"
+                }
+                .getOrElse("")
 
-          Some(ExampleSource(f.getName, section, title, url))
-      }
+              Some(ExampleSource(f.getName, section, title, url))
+          }
+        }
+        .sortBy(_.file)
     }
-  }
 }
 
 object SbtSoccoKeys {
