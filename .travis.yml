@@ -2,14 +2,14 @@ language: scala
 
 matrix:
   include:
-  - env: SBT_VERSION="1.2.8"
-    jdk: openjdk8
-  - env: SBT_VERSION="1.2.8"
-    jdk: openjdk11
-  - env: SBT_VERSION="1.3.0-RC1"
-    jdk: openjdk8
-  - env: SBT_VERSION="1.3.0-RC1"
-    jdk: openjdk11
+    - env: SBT_VERSION="1.2.8"
+      jdk: openjdk8
+    - env: SBT_VERSION="1.2.8"
+      jdk: openjdk11
+    - env: SBT_VERSION="1.3.4"
+      jdk: openjdk8
+    - env: SBT_VERSION="1.3.4"
+      jdk: openjdk11
 
 script:
   ## runs both regular tests and sbt-scripted integration tests
