@@ -4,6 +4,13 @@ import sbt.Keys._
 import sbt._
 import sbt.plugins.JvmPlugin
 import com.typesafe.sbt.site.SitePlugin
+import java.io.PrintWriter
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.stream.Collectors
+import scala.collection.JavaConverters._
+import scala.util.Try
+import scala.io.Source
 
 object SbtSoccoPlugin extends AutoPlugin {
   val SoccoCompilerPlugin
@@ -26,6 +33,7 @@ object SbtSoccoPlugin extends AutoPlugin {
       soccoOnCompile.in(p) := onCompile,
       soccoPackage := Nil,
       soccoOut := target.value / "socco",
+      soccoIndex := index.value,
       scalacOptions.in(p) ++= Def.taskDyn {
         if (soccoOnCompile.in(p).value) {
           Def.task(
@@ -90,6 +98,89 @@ object SbtSoccoPlugin extends AutoPlugin {
       extracted.appendWithoutSession(settings, s)
   }
 
+  private[this] case class ExampleSource(
+      file: String,
+      section: String,
+      title: String,
+      url: String
+  )
+
+  private[this] val read: File => Option[List[String]] =
+    file => Try(Source.fromFile(file).getLines.toList).toOption
+
+  private[this] def index: Def.Initialize[Task[File]] = Def.task {
+    val header =
+      soccoHeader.?.map(_.map(read.andThen(_.mkString("\n")))).value.getOrElse {
+        s"<title>${name.value}</title>"
+      }
+    val footer =
+      soccoFooter.?.map(_.map(read.andThen(_.mkString("\n")))).value
+        .getOrElse("")
+    val items = sources.value
+      .groupBy(_.section)
+      .map {
+        case (section, scs) =>
+          s"""### $section
+             |${scs
+               .map { s =>
+                 s"- [${s.file}](${s.file}.html) ([source](${s.url})) - ${s.title}"
+               }
+               .mkString("\n")}""".stripMargin
+      }
+      .mkString("\n")
+
+    val html =
+      s"""<!DOCTYPE html>
+         |<html>
+         |<head>$header</head>
+         |<xmp theme="spacelab" style="display:none;">
+         |$items
+         |</xmp>
+         |$footer
+         |<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+         |</html>""".stripMargin
+
+    soccoOut.value.mkdirs()
+    val file = soccoOut.value / "index.html"
+    val out = new PrintWriter(file)
+    out.println(html)
+    out.close()
+    file
+  }
+
+  private[this] def sources = Def.task {
+    val examplePattern = "^\\s*// Example:\\s*(.+)".r
+    val files = Files
+      .walk(Paths.get((Compile / scalaSource).value.toURI()))
+      .collect(Collectors.toList())
+      .asScala
+      .iterator
+      .filter(Files.isRegularFile(_))
+      .map(_.toFile())
+      .toList
+
+    files.flatMap { f =>
+      val lines = read(f).getOrElse(Nil)
+      lines.filter(_.startsWith("// Example:")) match {
+        case Nil       => None
+        case head :: _ =>
+          // val section = s"${f.getParentFile.getName}/"
+          val section =
+            (Compile / scalaSource).value
+              .relativize(f)
+              .fold("")(_.getParent.replace("/", "."))
+          val title = examplePattern.unapplySeq(head).get.head
+          val url = scmInfo.value
+            .map { info =>
+              val path = baseDirectory.value.relativize(f).fold("")(_.toString)
+              s"${info.browseUrl}/blob/master/${normalizedName.value}/$path"
+            }
+            .getOrElse("")
+
+          Some(ExampleSource(f.getName, section, title, url))
+      }
+    }
+  }
 }
 
 object SbtSoccoKeys {
