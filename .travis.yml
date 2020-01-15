@@ -6,9 +6,9 @@ matrix:
       jdk: openjdk8
     - env: SBT_VERSION="1.2.8"
       jdk: openjdk11
-    - env: SBT_VERSION="1.3.4"
+    - env: SBT_VERSION="1.3.6"
       jdk: openjdk8
-    - env: SBT_VERSION="1.3.4"
+    - env: SBT_VERSION="1.3.6"
       jdk: openjdk11
 
 script:
@@ -25,5 +25,6 @@ before_cache:
 # These directories are cached to S3 at the end of the build
 cache:
   directories:
+    - $HOME/.cache/coursier
     - $HOME/.ivy2/cache
     - $HOME/.sbt/boot/
