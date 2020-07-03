@@ -6,9 +6,9 @@ matrix:
       jdk: openjdk8
     - env: SBT_VERSION="1.2.8"
       jdk: openjdk11
-    - env: SBT_VERSION="1.3.7"
+    - env: SBT_VERSION="1.3.13"
       jdk: openjdk8
-    - env: SBT_VERSION="1.3.7"
+    - env: SBT_VERSION="1.3.13"
       jdk: openjdk11
 
 script:
