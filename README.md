@@ -3,12 +3,12 @@
 [![Download](https://api.bintray.com/packages/regadas/sbt-plugins/sbt-socco/images/download.svg)](https://bintray.com/regadas/sbt-plugins/sbt-socco/_latestVersion)
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-This is an sbt plugin for [Socco]
+This is an sbt plugin for [socco-ng]
 
 > Socco is a Scala compiler plugin to generate documentation from Scala source files.
   It produces HTML documents that display your comments alongside your code. Comments are passed through Markdown, and the Scala code is syntax highlighted, typed and linked to the appropriate API Doc.
   
-[Socco] is developed by our friends @ [Criteo].
+[socco-ng](https://github.com/socco-ng) is the updated form of [Socco] that was initially developed by our friends @ [Criteo]. 
 
 ## Usage
 
@@ -41,7 +41,7 @@ If you set `soccoOnCompile := false` to compile the examples you need to run:
 
 ## How do I write examples?
 
-To understand the supported syntax please check [socco](https://github.com/criteo/socco#syntax) repo.
+To understand the supported syntax please check [socco](https://github.com/socco-ng) repo.
 
 ## Examples
 
