@@ -13,8 +13,8 @@ import scala.util.Try
 import scala.io.Source
 
 object SbtSoccoPlugin extends AutoPlugin {
-  val SoccoCompilerPlugin
-      : ModuleID = "com.criteo.socco" %% "socco-plugin" % "0.1.9"
+  private[this] val SoccoCompilerPlugin: ModuleID =
+    ("io.regadas" %% "socco-ng" % "0.1.2").cross(CrossVersion.full)
 
   override def trigger: PluginTrigger = noTrigger
   override def requires = JvmPlugin && SitePlugin
@@ -109,29 +109,31 @@ object SbtSoccoPlugin extends AutoPlugin {
   private[this] val read: File => Option[List[String]] =
     file => Try(Source.fromFile(file).getLines.toList).toOption
 
-  private[this] def index: Def.Initialize[Task[File]] = Def.task {
-    val header =
-      soccoHeader.?.map(_.map(read.andThen(_.mkString("\n")))).value.getOrElse {
-        s"<title>${name.value}</title>"
-      }
-    val footer =
-      soccoFooter.?.map(_.map(read.andThen(_.mkString("\n")))).value
-        .getOrElse("")
-    val items = sources.value
-      .groupBy(_.section)
-      .map {
-        case (section, scs) =>
-          s"""### $section
+  private[this] def index: Def.Initialize[Task[File]] =
+    Def.task {
+      val header =
+        soccoHeader.?.map(_.map(read.andThen(_.mkString("\n")))).value
+          .getOrElse {
+            s"<title>${name.value}</title>"
+          }
+      val footer =
+        soccoFooter.?.map(_.map(read.andThen(_.mkString("\n")))).value
+          .getOrElse("")
+      val items = sources.value
+        .groupBy(_.section)
+        .map {
+          case (section, scs) =>
+            s"""### $section
              |${scs
-               .map { s =>
-                 s"- [${s.file}](${s.file}.html) ([source](${s.url})) - ${s.title}"
-               }
-               .mkString("\n")}""".stripMargin
-      }
-      .mkString("\n")
+              .map { s =>
+                s"- [${s.file}](${s.file}.html) ([source](${s.url})) - ${s.title}"
+              }
+              .mkString("\n")}""".stripMargin
+        }
+        .mkString("\n")
 
-    val html =
-      s"""<!DOCTYPE html>
+      val html =
+        s"""<!DOCTYPE html>
          |<html>
          |<head>$header</head>
          |<xmp theme="spacelab" style="display:none;">
@@ -141,13 +143,13 @@ object SbtSoccoPlugin extends AutoPlugin {
          |<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
          |</html>""".stripMargin
 
-    soccoOut.value.mkdirs()
-    val file = soccoOut.value / "index.html"
-    val out = new PrintWriter(file)
-    out.println(html)
-    out.close()
-    file
-  }
+      soccoOut.value.mkdirs()
+      val file = soccoOut.value / "index.html"
+      val out = new PrintWriter(file)
+      out.println(html)
+      out.close()
+      file
+    }
 
   private[this] def sources: Def.Initialize[Task[List[ExampleSource]]] =
     Def.task {
