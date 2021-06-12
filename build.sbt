@@ -33,7 +33,7 @@ lazy val `sbt-socco` = project
 lazy val `socco-examples` = project
   .in(file("socco-examples"))
   .settings(
-    scalaVersion := "2.13.5",
+    scalaVersion := "2.13.6",
     publish / skip := true,
     soccoOnCompile := true,
     soccoPackage += "scala:http://www.scala-lang.org/api/current/",
