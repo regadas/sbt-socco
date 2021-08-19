@@ -121,14 +121,13 @@ object SbtSoccoPlugin extends AutoPlugin {
           .getOrElse("")
       val items = sources.value
         .groupBy(_.section)
-        .map {
-          case (section, scs) =>
-            s"""### $section
+        .map { case (section, scs) =>
+          s"""### $section
              |${scs
-              .map { s =>
-                s"- [${s.file}](${s.file}.html) ([source](${s.url})) - ${s.title}"
-              }
-              .mkString("\n")}""".stripMargin
+            .map { s =>
+              s"- [${s.file}](${s.file}.html) ([source](${s.url})) - ${s.title}"
+            }
+            .mkString("\n")}""".stripMargin
         }
         .mkString("\n")
 
