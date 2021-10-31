@@ -62,7 +62,7 @@ object SbtSoccoPlugin extends AutoPlugin {
       (Compile / compile).in(p) := Def.taskDyn {
         val default = (Compile / compile).in(p).taskValue
         if (soccoOnCompile.in(p).value) {
-          //Generate scio-examples/target/site/index.html
+          // Generate scio-examples/target/site/index.html
           Def.task {
             soccoIndex.in(p).?.value
             default.value
