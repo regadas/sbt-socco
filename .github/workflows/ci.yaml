@@ -1,0 +1,15 @@
+name: ci
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: "actions/checkout@v3"
+      - name: "Java Setup"
+        uses: "actions/setup-java@v3"
+        with:
+          distribution: temurin
+          java-version: "11"
+          cache: "sbt"
+      - run: sbt -Dfile.encoding=UTF8 sbt-socco/scripted
