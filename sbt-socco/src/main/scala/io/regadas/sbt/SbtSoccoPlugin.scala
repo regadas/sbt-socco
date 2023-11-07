@@ -134,9 +134,10 @@ object SbtSoccoPlugin extends AutoPlugin {
       val html =
         s"""<!DOCTYPE html>
          |<html>
-         |<head>$header</head>
+         |<head>
          |<link media="all" rel="stylesheet"
          |      href="https://bootswatch.com/4/spacelab/bootstrap.css" />
+         |$header
          |</head>
          |<body>
          |<textarea hidden id="sourceTA">
