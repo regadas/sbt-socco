@@ -14,7 +14,7 @@ import scala.io.Source
 
 object SbtSoccoPlugin extends AutoPlugin {
   private[this] val SoccoCompilerPlugin: ModuleID =
-    ("io.regadas" %% "socco-ng" % "0.1.8").cross(CrossVersion.full)
+    ("io.regadas" %% "socco-ng" % "0.1.10").cross(CrossVersion.full)
 
   override def trigger: PluginTrigger = noTrigger
   override def requires = JvmPlugin && SitePlugin
