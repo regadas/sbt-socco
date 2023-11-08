@@ -134,12 +134,24 @@ object SbtSoccoPlugin extends AutoPlugin {
       val html =
         s"""<!DOCTYPE html>
          |<html>
-         |<head>$header</head>
-         |<xmp theme="spacelab" style="display:none;">
+         |<head>
+         |<link media="all" rel="stylesheet"
+         |      href="https://bootswatch.com/4/spacelab/bootstrap.css" />
+         |$header
+         |</head>
+         |<body>
+         |<textarea hidden id="sourceTA">
          |$items
-         |</xmp>
+         |</textarea>
+         |<div id="targetDiv" />
          |$footer
-         |<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+         |<script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+         |<script>
+         |  const text = document.getElementById('sourceTA').value;
+         |  const target = document.getElementById('targetDiv');
+         |  const converter = new showdown.Converter();
+         |  target.innerHTML = converter.makeHtml(text);
+         |</script>
          |</html>""".stripMargin
 
       soccoOut.value.mkdirs()
