@@ -11,7 +11,7 @@ inThisBuild(
       Developer(
         "regadas",
         "Filipe Regadas",
-        "filiperegadas@gmail.com",
+        "oss@regadas.email",
         url("https://twitter.com/regadas")
       )
     ),
