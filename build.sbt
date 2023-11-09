@@ -41,10 +41,3 @@ lazy val `socco-examples` = project
   )
   .enablePlugins(SbtSoccoPlugin)
   .enablePlugins(GhpagesPlugin)
-
-lazy val publishSettings: Seq[Def.Setting[_]] = Def.settings(
-  publishMavenStyle := false,
-  bintrayRepository := "sbt-plugins",
-  bintrayOrganization in bintray := None,
-  bintrayReleaseOnPublish := false
-)
