@@ -28,7 +28,6 @@ lazy val root = project
 
 lazy val `sbt-socco` = project
   .in(file("sbt-socco"))
-  .settings(publishSettings)
 
 lazy val `socco-examples` = project
   .in(file("socco-examples"))
