@@ -3,7 +3,7 @@ import _root_.io.regadas.sbt.SbtSoccoKeys._
 inThisBuild(
   List(
     organization := "io.regadas",
-    scalaVersion := "2.12.18",
+    scalaVersion := "2.12.19",
     licenses := Seq(
       "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
     ),
