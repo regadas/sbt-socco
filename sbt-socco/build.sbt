@@ -10,5 +10,5 @@ lazy val `sbt-socco` = project
     initialCommands in console := """import io.regadas.sbt._""",
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
   )
-  .settings(addSbtPlugin("com.github.sbt" % "sbt-site" % "1.6.0"))
+  .settings(addSbtPlugin("com.github.sbt" % "sbt-site" % "1.7.0"))
   .enablePlugins(ScriptedPlugin)
